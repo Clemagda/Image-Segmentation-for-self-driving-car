@@ -1,6 +1,7 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import StreamingResponse
 from PIL import Image
+import uvicorn
 import io
 import numpy as np
 import tensorflow as tf
