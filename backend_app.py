@@ -28,7 +28,7 @@ app = FastAPI()
 
 # Initialiser le modèle pré-entraîné et le feature extractor
 # Mettez à jour avec le chemin de votre modèle
-model_path = "Modèles/Data Augmentation/HF_model"
+model_path = "HF_model"
 pretrained_model = TFSegformerForSemanticSegmentation.from_pretrained(
     model_path)
 feature_extractor = SegformerFeatureExtractor(size=224)  # 256
