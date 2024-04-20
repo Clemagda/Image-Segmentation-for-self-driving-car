@@ -24,18 +24,37 @@ class_colors = {
     7: (128, 128, 128)  # Classe 7 : Gris - Nature
 }
 
-app = FastAPI()
 
-# Initialiser le modèle pré-entraîné et le feature extractor
-# Mettez à jour avec le chemin de votre modèle
-model_path = "HF_model"
-pretrained_model = TFSegformerForSemanticSegmentation.from_pretrained(
-    model_path)
+
+app = FastAPI()
+pretrained_model =  None
 feature_extractor = SegformerFeatureExtractor(size=224)  # 256
 
+async def load_model():
+    global pretrained_model
+    model_path = "HF_model"
+    try :
+        await asyncio.sleep(10)
+        pretrained_model = TFSegformerForSemanticSegmentation.from_pretrained(model_path)
+        print("Model loaded successfully")
+    except Exception as e:
+          print(f"Failed to load_model: {str(e)}")
+              
+
+#pretrained_model = TFSegformerForSemanticSegmentation.from_pretrained(
+    #model_path)
+
+
+@app.on_event("startup")
+async def startup_event():
+    #Chargement du modèle au démarrage
+    task == asyncio.create_task(load_model())
+    await task
 
 @app.post("/segment-image/")
 async def segment_image(file: UploadFile = File(...)):
+    if pretrained_model is None:
+        raise HTTPException(status_code=503, detail="Model is not loaded yet.")
     try:
         # Lecture de l'image uploadée
         image_bytes = await file.read()
