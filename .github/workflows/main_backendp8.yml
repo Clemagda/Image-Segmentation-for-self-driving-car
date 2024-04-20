@@ -57,7 +57,10 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: python-app
-
+          
+      - name: Enable debug logging
+        run: echo "ACTIONS_STEP_DEBUG=true" >> $GITHUB_ENV
+       
       - name: Unzip artifact for deployment
         run: unzip release.zip
 
