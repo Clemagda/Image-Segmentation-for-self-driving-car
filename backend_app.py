@@ -1,7 +1,7 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import StreamingResponse
-import six
-six.moves.reload_module(six)
+#import six
+#six.moves.reload_module(six)
 from PIL import Image
 import uvicorn
 import io
