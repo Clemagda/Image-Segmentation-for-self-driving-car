@@ -1,14 +1,17 @@
 fastapi==0.109.2
 #fastapi==0.68.0
-tensorflow==2.16.1
+tensorflow==2.15.1#2.16.1
 tf-keras==2.16.0
 numpy==1.25.2
 transformers==4.39.2
 pillow==10.0.1 #10.3.0 
 pydantic==1.10.13
-streamlit==1.31.0
+#streamlit==1.31.0
+streamlit>=0.88.0
 scipy==1.11.3
-uvicorn==0.27.0
+#uvicorn==0.27.0
+uvicorn>=0.13.4
 #six>=1.16.0
-requests==2.31.0
+requests>=2.26.0 #2.31.0
 python-multipart==0.0.2
+keras>=2.15.0,<2.16
