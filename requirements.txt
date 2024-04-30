@@ -14,4 +14,4 @@ uvicorn>=0.13.4
 six>=1.16.0
 requests>=2.26.0 #2.31.0
 python-multipart==0.0.2
-keras>=2.15.0,<2.16
+#keras>=2.15.0,<2.16
