@@ -1,7 +1,8 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import StreamingResponse
-#import six
-#six.moves.reload_module(six)
+import asyncio
+import os
 from PIL import Image
 import uvicorn
 import io
@@ -27,31 +28,34 @@ class_colors = {
 }
 
 
-
-app = FastAPI()
-pretrained_model =  None
+pretrained_model = None
 feature_extractor = SegformerFeatureExtractor(size=224)  # 256
+
 
 async def load_model():
     global pretrained_model
     model_path = "HF_model"
-    try :
+    try:
         await asyncio.sleep(10)
-        pretrained_model = TFSegformerForSemanticSegmentation.from_pretrained(model_path)
+        pretrained_model = TFSegformerForSemanticSegmentation.from_pretrained(
+            model_path)
         print("Model loaded successfully")
     except Exception as e:
-          print(f"Failed to load_model: {str(e)}")
-              
-
-#pretrained_model = TFSegformerForSemanticSegmentation.from_pretrained(
-    #model_path)
+        print(f"Failed to load_model: {str(e)}")
 
 
-@app.on_event("startup")
-async def startup_event():
-    #Chargement du modèle au démarrage
-    task == asyncio.create_task(load_model())
-    await task
+# pretrained_model = TFSegformerForSemanticSegmentation.from_pretrained(
+    # model_path)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await load_model()
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
+
 
 @app.post("/segment-image/")
 async def segment_image(file: UploadFile = File(...)):
@@ -99,5 +103,6 @@ async def segment_image(file: UploadFile = File(...)):
 
 
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", 8000))  # Utiliser le port défini par Azure ou, par défaut, 8000
+    # Utiliser le port défini par Azure ou, par défaut, 8000
+    port = int(os.getenv("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)
