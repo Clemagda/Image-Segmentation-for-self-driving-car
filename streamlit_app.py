@@ -5,7 +5,7 @@ import io
 import os
 
 # Récupérez l'URL de base de l'API à partir des variables d'environnement ou utilisez localhost par défaut
-BASE_URL = os.getenv("API_URL", "http://backendp8.azurewebsites.net")
+BASE_URL = os.getenv("API_URL", "https://backendp8.azurewebsites.net")
 # BASE_URL = "http://localhost:8000"
 
 st.title('Image Semantic Segmentation')
