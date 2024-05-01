@@ -1,13 +1,12 @@
 
-# TODO: Convertir le modèle en TF lite
+
 # TODO: Ajuster le pétraitement des images en conséquence
 # TODO: Debuggage du script. Nettoyer les parties de conversion résiduelles
 # TODO: Ajuster les requirements si nécessaires (j'en doute).
 # TODO: Vérifier l'execution avec streamlit en local
 # TODO: Pousser et déployer.
-from transformers import SegformerFeatureExtractor, TFSegformerForSemanticSegmentation
-from contextlib import asynccontextmanager
-from fastapi import FastAPI, File, UploadFile, HTTPException
+
+from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import StreamingResponse
 import os
 from PIL import Image
@@ -15,7 +14,7 @@ import uvicorn
 import io
 import numpy as np
 import tensorflow as tf
-from transformers import SegformerFeatureExtractor
+
 
 # Configuration des identifiants de classe et des couleurs
 id2label = {
@@ -44,12 +43,13 @@ class_colors = {
 
 def preprocess_image(image_bytes):
     image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
-    # Assurez-vous que la taille correspond à votre modèle
-    image_resized = image.resize((224, 224))
-    image_np = np.array(image_resized) / 255.0
-    # Assurez-vous que le type de données est correct
+    image_resized = image.resize((512, 512))
+    image_np = np.array(image_resized) / 255.0  # Normalisation
+    # Changement de l'ordre des axes pour [C, H, W]
+    image_np = np.transpose(image_np, (2, 0, 1))
     image_np = image_np.astype(np.float32)
-    return np.expand_dims(image_np, axis=0)  # Ajoute une dimension de lot
+    # Ajoute une dimension de lot [N, C, H, W]
+    return np.expand_dims(image_np, axis=0)
 
 
 app = FastAPI()
@@ -70,11 +70,12 @@ async def segment_image(file: UploadFile = File(...)):
     interpreter.set_tensor(input_details[0]['index'], input_data)
     interpreter.invoke()
     output_data = interpreter.get_tensor(output_details[0]['index'])[0]
-
+    output_prob = tf.nn.softmax(output_data, 1)
     # Application des couleurs basées sur la prédiction
-    pred_seg = np.argmax(output_data, axis=-1)
+    pred_seg = np.argmax(output_data, axis=0)  # -1
+    print(f"Unique labels predicted : {np.unique(pred_seg)}")
     mapped_seg = np.vectorize(id2label.get)(pred_seg)
-    color_seg = np.zeros((224, 224, 3), dtype=np.uint8)
+    color_seg = np.zeros((128, 128, 3), dtype=np.uint8)
     for label, color in class_colors.items():
         color_seg[mapped_seg == label] = color
     color_image = Image.fromarray(color_seg)
