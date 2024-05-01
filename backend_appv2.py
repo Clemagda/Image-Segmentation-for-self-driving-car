@@ -79,6 +79,7 @@ async def segment_image(file: UploadFile = File(...)):
     for label, color in class_colors.items():
         color_seg[mapped_seg == label] = color
     color_image = Image.fromarray(color_seg)
+    color_image = color_image.resize((2048, 1024), Image.NEAREST)
 
     # Préparation de la réponse
     img_byte_arr = io.BytesIO()
