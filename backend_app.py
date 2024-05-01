@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import StreamingResponse
-import asyncio
+# import asyncio
 import os
 from PIL import Image
 import uvicorn
@@ -32,11 +32,11 @@ pretrained_model = None
 feature_extractor = SegformerFeatureExtractor(size=224)  # 256
 
 
-async def load_model():
+async def load_model():  # async
     global pretrained_model
     model_path = "HF_model"
     try:
-        await asyncio.sleep(10)
+        # asyncio.sleep(10) await
         pretrained_model = TFSegformerForSemanticSegmentation.from_pretrained(
             model_path)
         print("Model loaded successfully")
@@ -50,7 +50,7 @@ async def load_model():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await load_model()
+    load_model()
     yield
 
 
