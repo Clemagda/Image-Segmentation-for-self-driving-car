@@ -4,7 +4,7 @@ annotated-types
 anyio
 astor
 astunparse
-asyncio
+#asyncio
 attrs
 azure-functions
 base58
