@@ -32,7 +32,7 @@ pretrained_model = None
 feature_extractor = SegformerFeatureExtractor(size=224)  # 256
 
 
-async def load_model():  # async
+def load_model():  # async
     global pretrained_model
     model_path = "HF_model"
     try:
@@ -48,17 +48,17 @@ async def load_model():  # async
     # model_path)
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    load_model()
-    yield
+# @asynccontextmanager
+# async def lifespan(app: FastAPI):
+#    load_model()
+#    yield
 
-
-app = FastAPI(lifespan=lifespan)
+load_model()
+app = FastAPI()  # lifespan=lifespan
 
 
 @app.post("/segment-image/")
-async def segment_image(file: UploadFile = File(...)):
+async def segment_image(file: UploadFile = File(...)):  # async
     if pretrained_model is None:
         raise HTTPException(status_code=503, detail="Model is not loaded yet.")
     try:
