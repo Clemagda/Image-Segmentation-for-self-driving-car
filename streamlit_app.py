@@ -28,13 +28,17 @@ if file is not None:
         segment_url = f"{BASE_URL}/segment-image/"
 
         # Faire la requête POST à l'API
+      try:
         response = requests.post(segment_url, files=files)
-
+        response.raise_for_status()
+      
         if response.status_code == 200:
             # Obtenir l'image segmentée et l'afficher
             segmented_image_bytes = response.content
             segmented_image = Image.open(io.BytesIO(segmented_image_bytes))
             st.image(segmented_image, caption='Segmented Image',
                      use_column_width=True)
-        else:
-            st.error("Failed to segment the image. Please try again.")
+      except requests.exceptions.HTTPError as http_err:
+        st.error(f"HTTP error occured: {http_err}")
+      except Exception as err:
+        st.error(f"Other error occured : {err}")
