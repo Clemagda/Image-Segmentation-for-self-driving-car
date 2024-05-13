@@ -15,8 +15,10 @@ Ce projet implémente un modèle de segmentation sémantique d'images pour ident
   - batiment
   - Signalisation
    
-- 
+  
 - **Visualisation des résultats** : Outils intégrés pour visualiser les sorties du modèle sur les images testées via une application Web App accessible via streamlit.
+
+![Visualisation de l'image segmentée à coté de l'image originale. ](Visuels/predcition hf_model.png "Exemple de segmentation sémantique.")
 
 ## Technologies Utilisées
 
